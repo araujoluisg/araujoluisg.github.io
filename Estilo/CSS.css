@@ -1,0 +1,83 @@
+body {
+    font-family: 'Averia Gruesa Libre', sans-serif;
+    background-color: #1f1f1f; 
+    color: #fff; 
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px; 
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #333; 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); 
+}
+
+h1, h2 {
+    text-align: center;
+    font-family: 'Averia Gruesa Libre', cursive;
+    color: #ccc; 
+}
+
+#admin-panel, #user-panel, #caixa-status {
+    margin-bottom: 20px;
+}
+
+input[type="password"], input[type="text"] {
+    width: calc(100% - 40px); 
+    padding: 8px;
+    margin-bottom: 10px;
+    display: block;
+    border: 1px solid #666;
+    border-radius: 5px;
+    background-color: #444; 
+    color: #ccc;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049; 
+}
+
+#withdraw-result, #caixa-notes {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #444; 
+    border: 1px solid #666; 
+    border-radius: 5px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+.link-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.link-container a {
+    display: inline-block; 
+    margin: 0 10px; 
+}

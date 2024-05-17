@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<!-- Comentários -->
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Caixa Eletrônico</title>
+        <link rel="stylesheet" type="text/css" href="Estilo/CSS.css" />
+        <link rel="icon" href="Imagens/logo.png" />
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Gruesa+Libre&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />   
+        <script src="Scripts/script.js"></script>
+    </head>
+    
+    <body>
+        <div class="container">
+            <a href="/Index.html"><button>Voltar</button></a>
+            <h1>Caixa Eletrônico</h1>
+            <h2>Status do Caixa Eletrônico</h2>
+            <div id="caixa-notes"></div>
+            <div id="admin-panel">
+                <h2>Administração</h2>
+                    <input type="password" id="admin-password" placeholder="Senha">
+
+                    <label for="note-100">R$ 100,00:</label>
+                    <input type="text" id="note-100" value="0" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+
+                    <label for="note-50">R$ 50,00:</label>
+                    <input type="text" id="note-50" value="0" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+                    <label for="note-20">R$ 20,00:</label>
+
+                    <input type="text" id="note-20" value="0" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+                    <label for="note-10">R$ 10,00:</label>
+
+                    <input type="text" id="note-10" value="0" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+                    <label for="note-5">R$ 5,00:</label>
+
+                    <input type="text" id="note-5" value="0" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+                    <label for="note-2">R$ 2,00:</label>
+                    
+                    <input type="text" id="note-2" value="0" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+                    <button onclick="reloadCaixa()">Recarregar</button>
+            </div>
+            </div>
+        </div>
+    </body>
+</html>

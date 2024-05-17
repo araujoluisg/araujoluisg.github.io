@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<!-- Comentários -->
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Caixa Eletrônico</title>
+        <link rel="stylesheet" type="text/css" href="Estilo/CSS.css" />
+        <link rel="icon" href="Imagens/logo.png" />
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Gruesa+Libre&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />   
+        <script src="Scripts/script.js"></script>
+    </head>
+    
+    <body>
+        <div class="container">
+            <a href="/Index.html"><button>Voltar</button></a>
+            <h1>Caixa Eletrônico</h1>
+            <div id="user-panel">
+                <h2>Usuário</h2>
+                <input type="password" id="user-password" placeholder="Senha">
+
+                <input type="text" id="withdraw-amount" placeholder="Valor do Saque" value="" oninput="this.value = this.value.replace(/[^\d]/g, '')">
+                <button onclick="withdrawCash()">Sacar</button>
+                <div id="withdraw-result"></div>
+            </div>
+            <div id="caixa-status">
+                <h2>Status do Caixa Eletrônico</h2>
+                <div id="caixa-notes"></div>
+            </div>
+        </div>
+    </body>
+</html>
