@@ -59,7 +59,7 @@ function reloadCaixa() {
           'event_type':'event_custom',
           'custom_section': 'administrador',
           'custom_type': 'recarga',
-          'custom_type_error':'erro:todos-campos-zerados',
+          'custom_type_error':'erro:campos-zerados',
         });
         return;
     }
