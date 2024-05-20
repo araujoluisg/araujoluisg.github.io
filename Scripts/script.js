@@ -10,22 +10,24 @@ let caixaStatus = {
 
 function reloadCaixa() {
     const password = document.getElementById('admin-password').value;
+
     // validar a senha do administrador
     if (password !== 'senhaAdmin123') {
         alert('Senha incorreta. Ação não autorizada.');
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          'event':'callback',
-          'event_type':'event_custom',
-          'custom_section': 'administrador',
-          'custom_type': 'recarga',
-          'custom_type_error':'erro:senha-invalida',
+            'event': 'callback',
+            'event_type': 'event_custom',
+            'custom_section': 'administrador',
+            'custom_type': 'recarga',
+            'custom_type_error': 'erro:senha-invalida',
         });
         return;
     }
 
     let recargaSucesso = false;
     let camposVazios = true;
+    let novoCaixaStatus = { ...caixaStatus }; // copiar o estado atual do caixa
 
     for (let note of notes) {
         const quantityField = document.getElementById(`note-${note}`);
@@ -35,45 +37,46 @@ function reloadCaixa() {
             alert('Digite um valor válido em todos os campos.');
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
-              'event':'callback',
-              'event_type':'event_custom',
-              'custom_section': 'administrador',
-              'custom_type': 'recarga',
-              'custom_type_error':'erro:campos-inválidos',
+                'event': 'callback',
+                'event_type': 'event_custom',
+                'custom_section': 'administrador',
+                'custom_type': 'recarga',
+                'custom_type_error': 'erro:campos-inválidos',
             });
             return;
         }
 
         if (quantity > 0) {
             camposVazios = false;
+            novoCaixaStatus[note.toString()] = (novoCaixaStatus[note.toString()] || 0) + quantity;
         }
-
-        caixaStatus[note.toString()] += quantity;
     }
 
     if (camposVazios) {
         alert('Nenhuma nota foi adicionada. Por favor, insira a quantidade de notas desejada.');
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          'event':'callback',
-          'event_type':'event_custom',
-          'custom_section': 'administrador',
-          'custom_type': 'recarga',
-          'custom_type_error':'erro:campos-zerados',
+            'event': 'callback',
+            'event_type': 'event_custom',
+            'custom_section': 'administrador',
+            'custom_type': 'recarga',
+            'custom_type_error': 'erro:campos-zerados',
         });
         return;
     }
 
+    // atualizar o estado do caixa apenas se a recarga for bem-sucedida
+    caixaStatus = novoCaixaStatus;
     recargaSucesso = true;
 
     if (recargaSucesso) {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          'event':'callback',
-          'event_type':'event_custom',
-          'custom_section': 'administrador',
-          'custom_type': 'recarga',
-          'custom_type_error':'sucesso',
+            'event': 'callback',
+            'event_type': 'event_custom',
+            'custom_section': 'administrador',
+            'custom_type': 'recarga',
+            'custom_type_error': 'sucesso',
         });
         alert('Caixa Eletrônico recarregado com sucesso!');
         clearAdminInputs();
@@ -82,11 +85,11 @@ function reloadCaixa() {
     } else {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          'event':'callback',
-          'event_type':'event_custom',
-          'custom_section': 'administrador',
-          'custom_type': 'recarga',
-          'custom_type_error':'erro:recarga-nao-sucedida',
+            'event': 'callback',
+            'event_type': 'event_custom',
+            'custom_section': 'administrador',
+            'custom_type': 'recarga',
+            'custom_type_error': 'erro:recarga-nao-sucedida',
         });
         alert('Nenhuma nota foi adicionada. Por favor, insira a quantidade de notas desejada.');
     }
@@ -163,7 +166,7 @@ function optimizeWithdraw(amount) {
     }
 
     if (quantiaRestante === 0) {
-        // Realizar o saque
+        // realizar o saque
         for (let note in withdrawResult) {
             caixaStatus[note.toString()] -= withdrawResult[note];
         }
