@@ -11,7 +11,6 @@ let caixaStatus = {
 function reloadCaixa() {
     const password = document.getElementById('admin-password').value;
 
-    // validar a senha do administrador
     if (password !== 'senhaAdmin123') {
         alert('Senha incorreta. Ação não autorizada.');
         window.dataLayer = window.dataLayer || [];
@@ -25,15 +24,14 @@ function reloadCaixa() {
         return;
     }
 
-    let recargaSucesso = false;
     let camposVazios = true;
-    let novoCaixaStatus = { ...caixaStatus }; // copiar o estado atual do caixa
+    let notasRecarregadas = [];
 
     for (let note of notes) {
         const quantityField = document.getElementById(`note-${note}`);
         const quantity = parseInt(quantityField.value);
 
-        if (isNaN(quantity) || quantityField.value.trim() === "") {
+        if (isNaN(quantity) || quantity <= 0) {
             alert('Digite um valor válido em todos os campos.');
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
@@ -41,14 +39,15 @@ function reloadCaixa() {
                 'event_type': 'event_custom',
                 'custom_section': 'administrador',
                 'custom_type': 'recarga',
-                'custom_type_error': 'erro:campos-inválidos',
+                'custom_type_error': 'erro:campos-invalidos',
             });
             return;
         }
 
         if (quantity > 0) {
             camposVazios = false;
-            novoCaixaStatus[note.toString()] = (novoCaixaStatus[note.toString()] || 0) + quantity;
+            caixaStatus[note] += quantity;
+            notasRecarregadas.push(`${quantity}x${note}`);
         }
     }
 
@@ -65,34 +64,20 @@ function reloadCaixa() {
         return;
     }
 
-    // atualizar o estado do caixa apenas se a recarga for bem-sucedida
-    caixaStatus = novoCaixaStatus;
-    recargaSucesso = true;
+    let notasRecarregadasStr = notasRecarregadas.join('-');
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'callback',
+        'event_type': 'event_custom',
+        'custom_section': 'administrador',
+        'custom_type': 'recarga',
+        'custom_type_error': `sucesso:notas:${notasRecarregadasStr}`,
+    });
 
-    if (recargaSucesso) {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-            'event': 'callback',
-            'event_type': 'event_custom',
-            'custom_section': 'administrador',
-            'custom_type': 'recarga',
-            'custom_type_error': 'sucesso',
-        });
-        alert('Caixa Eletrônico recarregado com sucesso!');
-        clearAdminInputs();
-        saveCaixaStatusToLocalStorage();
-        displayCaixaStatus();
-    } else {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-            'event': 'callback',
-            'event_type': 'event_custom',
-            'custom_section': 'administrador',
-            'custom_type': 'recarga',
-            'custom_type_error': 'erro:recarga-nao-sucedida',
-        });
-        alert('Nenhuma nota foi adicionada. Por favor, insira a quantidade de notas desejada.');
-    }
+    alert('Caixa Eletrônico recarregado com sucesso!');
+    clearAdminInputs();
+    saveCaixaStatusToLocalStorage();
+    displayCaixaStatus();
 }
 
 function clearAdminInputs() {
@@ -155,6 +140,7 @@ function optimizeWithdraw(amount) {
 
     let quantiaRestante = amount;
     const withdrawResult = {};
+    const notasSacadas = [];
 
     for (let note of notes) {
         const noteValue = note;
@@ -162,34 +148,38 @@ function optimizeWithdraw(amount) {
         if (noteQuantity > 0) {
             withdrawResult[noteValue] = noteQuantity;
             quantiaRestante -= noteValue * noteQuantity;
+            notasSacadas.push(`${noteQuantity}x${noteValue}`);
         }
     }
 
     if (quantiaRestante === 0) {
-        // realizar o saque
         for (let note in withdrawResult) {
             caixaStatus[note.toString()] -= withdrawResult[note];
         }
-        saveCaixaStatusToLocalStorage(); 
+        saveCaixaStatusToLocalStorage();
+
+        let notasSacadasStr = notasSacadas.join('-');
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          'event':'callback',
-          'event_type':'event_custom',
-          'custom_section': 'usuario',
-          'custom_type': 'saque',
-          'custom_type_error':'sucesso',
+            'event': 'callback',
+            'event_type': 'event_custom',
+            'custom_section': 'usuario',
+            'custom_type': 'saque',
+            'custom_type_error': `sucesso:notas:${notasSacadasStr}`,
         });
+
         alert('Saque realizado com sucesso.');
         return withdrawResult;
     } else {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
-          'event':'callback',
-          'event_type':'event_custom',
-          'custom_section': 'usuario',
-          'custom_type': 'saque',
-          'custom_type_error':'erro:sem-notas-disponiveis',
+            'event': 'callback',
+            'event_type': 'event_custom',
+            'custom_section': 'usuario',
+            'custom_type': 'saque',
+            'custom_type_error': 'erro:sem-notas-disponiveis',
         });
+
         alert('Não é possível realizar o saque. Caixa Eletrônico sem notas disponíveis.');
         return null;
     }
