@@ -11,6 +11,7 @@ let caixaStatus = {
 function reloadCaixa() {
     const password = document.getElementById('admin-password').value;
 
+    // valida a senha do administrador
     if (password !== 'senhaAdmin123') {
         alert('Senha incorreta. Ação não autorizada.');
         window.dataLayer = window.dataLayer || [];
@@ -24,14 +25,15 @@ function reloadCaixa() {
         return;
     }
 
-    let camposVazios = true;
     let notasRecarregadas = [];
+    let valid = true;
 
+    // valida todos os campos
     for (let note of notes) {
         const quantityField = document.getElementById(`note-${note}`);
         const quantity = parseInt(quantityField.value);
 
-        if (isNaN(quantity) || quantity <= 0) {
+        if (isNaN(quantity) || quantity < 0) {
             alert('Digite um valor válido em todos os campos.');
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
@@ -41,30 +43,26 @@ function reloadCaixa() {
                 'custom_type': 'recarga',
                 'custom_type_error': 'erro:campos-invalidos',
             });
-            return;
+            valid = false;
+            break;
         }
 
         if (quantity > 0) {
-            camposVazios = false;
-            caixaStatus[note] += quantity;
-            notasRecarregadas.push(`${quantity}x${note}`);
+            notasRecarregadas.push({ note, quantity });
         }
     }
 
-    if (camposVazios) {
-        alert('Nenhuma nota foi adicionada. Por favor, insira a quantidade de notas desejada.');
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-            'event': 'callback',
-            'event_type': 'event_custom',
-            'custom_section': 'administrador',
-            'custom_type': 'recarga',
-            'custom_type_error': 'erro:campos-zerados',
-        });
+    // caso tenha um campo invalido, não segue com a recarga do caixa
+    if (!valid) {
         return;
     }
 
-    let notasRecarregadasStr = notasRecarregadas.join('-');
+    // atualiza o caixa somente se todos os campos forem válidos
+    for (let recarga of notasRecarregadas) {
+        caixaStatus[recarga.note] += recarga.quantity;
+    }
+
+    let notasRecarregadasStr = notasRecarregadas.map(recarga => `${recarga.quantity}x${recarga.note}`).join('-');
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({
         'event': 'callback',
@@ -133,30 +131,83 @@ function clearUserInputs() {
 }
 
 function optimizeWithdraw(amount) {
+    // valor máximo de saque
+    const valorMaximo = 50000;
+
+    // verifica se o valor de saque é válido
     if (amount <= 0) {
         alert('Por favor, digite um valor válido para saque.');
         throw new Error('Valor de saque inválido');
     }
 
-    let quantiaRestante = amount;
+    // compara o valor com o valor máximo permitido
+    if (amount > valorMaximo) {
+        alert(`O valor máximo para saque é ${valorMaximo}.`);
+        throw new Error('Valor de saque excede o limite permitido');
+    }
+
     const withdrawResult = {};
     const notasSacadas = [];
 
-    for (let note of notes) {
-        const noteValue = note;
-        const noteQuantity = Math.min(Math.floor(quantiaRestante / noteValue), caixaStatus[noteValue.toString()]);
-        if (noteQuantity > 0) {
-            withdrawResult[noteValue] = noteQuantity;
-            quantiaRestante -= noteValue * noteQuantity;
-            notasSacadas.push(`${noteQuantity}x${noteValue}`);
+    // função para encontrar uma combinação de notas
+    function findCombination(amount, caixaStatus) {
+        // verifica se o valor de saque é maior do que o valor total
+        const totalCaixa = Object.keys(caixaStatus).reduce((total, nota) => total + (nota * caixaStatus[nota]), 0);
+        if (amount > totalCaixa) {
+            return null;
         }
+        const notasDisponiveis = Object.keys(caixaStatus).map(Number).sort((a, b) => b - a);
+        const notasSacadas = {};
+    
+        function backtrack(remainingAmount, index) {
+            if (remainingAmount === 0) {
+                return true;
+            }
+    
+            if (index >= notasDisponiveis.length || remainingAmount < 0) {
+                return false;
+            }
+    
+            const nota = notasDisponiveis[index];
+            const maxQuantidade = Math.min(Math.floor(remainingAmount / nota), caixaStatus[nota]);
+    
+            for (let quantidade = maxQuantidade; quantidade >= 0; quantidade--) {
+                notasSacadas[nota] = quantidade;
+                const restante = remainingAmount - quantidade * nota;
+    
+                if (backtrack(restante, index + 1)) {
+                    return true;
+                }
+            }
+    
+            delete notasSacadas[nota];
+            return false;
+        }
+    
+        if (amount > 0 && backtrack(amount, 0)) {
+            // Atualiza o caixaStatus com as notas retiradas
+            for (let nota in notasSacadas) {
+                caixaStatus[nota] -= notasSacadas[nota];
+            }
+            return notasSacadas;
+        }
+    
+        return null;
     }
 
-    if (quantiaRestante === 0) {
-        for (let note in withdrawResult) {
-            caixaStatus[note.toString()] -= withdrawResult[note];
+    const combination = findCombination(amount, caixaStatus);
+
+    if (combination) {
+        // conta as notas da combinação
+        for (let note in combination) {
+            withdrawResult[note] = combination[note];
         }
-        saveCaixaStatusToLocalStorage();
+
+        // atualiza o status do caixa
+        for (let note in withdrawResult) {
+            notasSacadas.push(`${withdrawResult[note]}x${note}`);
+        }
+        saveCaixaStatusToLocalStorage(caixaStatus);
 
         let notasSacadasStr = notasSacadas.join('-');
         window.dataLayer = window.dataLayer || [];
@@ -190,7 +241,9 @@ function displayWithdrawResult(withdrawResult) {
     if (withdrawResult) {
         let resultHTML = '<p>Saque realizado com sucesso. Notas dispensadas:</p><ul>';
         for (let note in withdrawResult) {
-            resultHTML += `<li>R$ ${note},00: ${withdrawResult[note]} notas</li>`;
+            if (withdrawResult[note] > 0) { // Verifica se a quantidade de notas é maior que zero
+                resultHTML += `<li>R$ ${note},00: ${withdrawResult[note]} notas</li>`;
+            }
         }
         resultHTML += '</ul>';
         withdrawResultDiv.innerHTML = resultHTML;
@@ -202,9 +255,17 @@ function displayWithdrawResult(withdrawResult) {
 function displayCaixaStatus() {
     const caixaNotesDiv = document.getElementById('caixa-notes');
     let notesHTML = '<ul>';
+    let totalCaixa = 0;
+    
     for (let note in caixaStatus) {
-        notesHTML += `<li>R$ ${note},00: ${caixaStatus[note]} notas</li>`;
+        const noteValue = parseInt(note);
+        const noteCount = caixaStatus[note];
+        const noteTotal = noteValue * noteCount;
+        totalCaixa += noteTotal;
+        notesHTML += `<li>R$ ${note},00: ${noteCount} notas</li>`;
     }
+    
     notesHTML += '</ul>';
+    notesHTML += `<p><strong>Valor total do caixa: R$ ${totalCaixa.toFixed(2)}</strong></p>`;
     caixaNotesDiv.innerHTML = notesHTML;
 }
