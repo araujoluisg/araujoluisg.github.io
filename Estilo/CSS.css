@@ -83,25 +83,20 @@ li {
 }
 
 pre {
-  background-color: #1e1e1e; /* fundo escuro */
-  color: #dcdcdc; /* cor do texto */
-  padding: 12px;
-  border-radius: 6px;
-  overflow-x: auto; /* scroll horizontal se necessário */
+  background-color: #1e1e1e;   
+  color: #59ff59;              
+  padding: 12px 16px;          
+  border-radius: 6px;          
+  font-family: "Fira Code", "Courier New", monospace;
+  font-size: 0.95em;
+  line-height: 1.5;
+  overflow-x: auto;            
 }
 
 pre code {
-  background: none; /* remove o fundo do inline code */
-  color: inherit;   /* herda a cor do pre */
-  font-size: 0.9em;
+  background: none;  
+  color: inherit;    
 }
 
-code {
-  font-family: "Fira Code", "Courier New", monospace; /* fonte monoespaçada */
-  background-color: #f4f4f4; /* fundo cinza claro */
-  color: #d63384; /* cor do texto */
-  padding: 2px 4px; /* espaço interno */
-  border-radius: 4px; /* cantos arredondados */
-  font-size: 0.95em; /* um pouco menor que o texto padrão */
-}
+
 
