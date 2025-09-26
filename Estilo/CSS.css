@@ -100,12 +100,13 @@ pre code {
 
 code {
   font-family: "Fira Code", "Courier New", monospace; 
-  background-color: #f4f4f4; 
+  background-color: #1e1e1e; 
   color: #a2fca2; 
   padding: 2px 4px; 
   border-radius: 4px; 
   font-size: 0.95em; 
 }
+
 
 
 
