@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<!-- Comentários -->
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Term Sanitizer by Luis Araujo</title>
+        <link rel="stylesheet" type="text/css" href="Estilo/CSS.css" />
+        <link rel="icon" href="Imagens/logo.png" />
+        <link href="https://fonts.googleapis.com/css2?family=Averia+Gruesa+Libre&display=swap" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />   
+        <script src="Scripts/script.js"></script>
+
+    </head>
+    
+    <body>
+        <div class="container">
+            <h1>Term Sanitizer by Luis Araujo</h1>
+            <div id="caixa-status">
+                <h2>Documentation</h2>
+                <div class="gtm-variable-doc">
+                    <h2>Variável Customizada no Google Tag Manager (GTM)</h2>
+                    <p><strong>Term Sanitizer by Luís Araújo</strong></p>
+
+                    <p>
+                        Este modelo de variável JavaScript personalizada no GTM tem a função de
+                        sanitizar um termo de pesquisa, aplicando diferentes transformações conforme
+                        as opções definidas pelo usuário.
+                    </p>
+
+                    <h3>Funcionamento</h3>
+
+                    <h4>Recebimento de parâmetros:</h4>
+                    <ul>
+                        <li><code>originalTerm</code>: termo original a ser tratado.</li>
+                        <li><code>removeSpaces</code> (opcional, padrão: <code>false</code>): define se os espaços serão removidos.</li>
+                        <li><code>separatorType</code> (opcional, padrão: <code>"-"</code>): caractere separador usado ao remover espaços.</li>
+                        <li><code>caseOption</code> (opcional, padrão: <code>"lowercase"</code>): define se o texto será convertido para minúsculas ou maiúsculas.</li>
+                    </ul>
+
+                    <h4>Sanitização inicial:</h4>
+                    <ul>
+                        <li>Se o <code>originalTerm</code> não for uma string, retorna uma string vazia.</li>
+                        <li>Remove espaços extras no início e no final do termo.</li>
+                    </ul>
+
+                    <h4>Remoção de acentos e caracteres especiais:</h4>
+                    <ul>
+                        <li>Substitui caracteres acentuados por suas versões sem acento (ex.: á → a).</li>
+                        <li>Troca <code>_</code> e <code>-</code> por espaços.</li>
+                    </ul>
+
+                    <h4>Filtragem de caracteres inválidos:</h4>
+                    <ul>
+                        <li>Mantém apenas letras (A-Z e a-z), números (0-9) e espaços.</li>
+                        <li>Remove espaços consecutivos.</li>
+                    </ul>
+
+                    <h4>Ajustes finais:</h4>
+                    <ul>
+                        <li>Se <code>removeSpaces</code> for <code>true</code>, substitui espaços pelo <code>separatorType</code> definido.</li>
+                        <li>Converte o texto para minúsculas ou maiúsculas conforme <code>caseOption</code>.</li>
+                    </ul>
+
+                    <h3>Exemplo de Uso</h3>
+
+                    <p><strong>Entrada:</strong></p>
+                    <pre><code>data = {
+                  originalTerm: "Olá_QCâRábõM! É incrívêl, e_tem térMôs_trâTADõs",
+                  removeSpaces: true,
+                  separatorType: "-",
+                  caseOption: "lowercase"
+                };
+                </code></pre>
+
+                    <p><strong>Saída:</strong></p>
+                    <pre><code>"ola-qcarabom-e-incrivel-e-tem-termos-tratados"</code></pre>
+
+                    <p>
+                        Essa variável é útil para garantir que termos capturados pelo GTM estejam
+                        padronizados antes de serem enviados para ferramentas de análise, como Google Analytics ou DataLayer.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    
+        <script src="script.js"></script>
+    </body>
+</html>
