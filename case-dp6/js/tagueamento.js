@@ -26,7 +26,7 @@ document.addEventListener('click', function (event) {
 
 //clicks cards - analise
 document.addEventListener('click', function (event) {
-  if (!window.location.pathname.includes('analise.html')) return;
+  if (!window.location.pathname.includes('analise')) return;
 
   const card = event.target.closest('.card-montadoras');
 
@@ -43,7 +43,7 @@ document.addEventListener('click', function (event) {
 
 //form start - sobre
 document.addEventListener('focusout', function (event) {
-  if (!window.location.pathname.includes('sobre.html')) return;
+  if (!window.location.pathname.includes('sobre')) return;
 
   const field = event.target;
   const form = field.closest('form');
@@ -64,8 +64,9 @@ document.addEventListener('focusout', function (event) {
 
 //form submit - sobre
 document.addEventListener('submit', function (event) {
-  const form = event.target;
+  if (!window.location.pathname.includes('sobre')) return;
 
+  const form = event.target;
   const button = form.querySelector('button[type="submit"]');
 
   gtag('event', 'form_submit', {
@@ -79,6 +80,8 @@ document.addEventListener('submit', function (event) {
 
 //view_form_success - sobre
 jQuery('.contato').on('submit', function (e) {
+  if (!window.location.pathname.includes('sobre')) return;
+
   var form = e.target;
 
   setTimeout(function () {
